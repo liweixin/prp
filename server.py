@@ -107,9 +107,22 @@ class Success:
         return render.success(operation)
         
 class SendApFeatures:
+    features_form = web.form.Form(
+        web.form.Textbox('BSSID',web.form.notnull,size=17),
+        web.form.Textbox('SSID',web.form.notnull,size=30),
+        web.form.Textbox('Security',web.form.notnull,size=50),
+        web.form.Textbox('Signal',web.form.notnull,size=3),
+        web.form.Textbox('Longtitude',web.form.notnull,size=12),
+        web.form.Textbox('Latitude',web.form.notnull,size=12),
+        web.form.Textbox('MacAdress',web.form.notnull,size=17),
+        web.form.Button('Submit'),
+    )    
     def GET(self):
-        if session.logged_in == True:
-            return 
+        #if session.logged_in == True:
+        #    return 
+        form = self.features_form()
+        return render.apFeatures(form)
+    
     def POST(self):
         timeStamp = int(time.time())
         timeArray = time.localtime(timeStamp)
