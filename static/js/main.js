@@ -8,7 +8,7 @@ map.enableScrollWheelZoom();                 //启用滚轮放大缩小
 function add_overlay(){
 	var str = document.getElementById("location").value;
 	var json = JSON.parse(str);
-	var len = getJsonObjLength(json)
+	var len = getJsonObjLength(json);
 	var myIcon = new BMap.Icon("https://raw.githubusercontent.com/liweixin/prp/master/pic/wifi.png", new BMap.Size(24,24));
 	for(var i=0; i<len; i++){
 		marker = new BMap.Marker(new BMap.Point(json[i].longtitude, json[i].latitude), {icon:myIcon});

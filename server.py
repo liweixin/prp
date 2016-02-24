@@ -7,6 +7,7 @@ import hashlib
 import os
 import json
 import config
+import dbOperations
 
 #initDatabase()支持中文
 
@@ -31,6 +32,7 @@ urls = (
     '/wifiInfos/?Latitude=(.+)&Longtitude=(.+)', 'GetWifiInfos',
     '/wifiLatLng', 'GetWifiLatLng',
     '/mapDisplay', 'ShowMap',
+    '/apFeaturesList', 'ApFeaturesList',
 )
 
 app = web.application(urls,globals())
@@ -43,6 +45,30 @@ render = web.template.render(config.templatesPath)
 db = web.database(dbn=config.dbn, db=config.db, user=config.dbuser, pw=config.dbpw)
 store = web.session.DBStore(db, 'Sessions')
 session = web.session.Session(app, store,initializer={'logged_in': False, 'username': ""})
+
+def getTimeString():
+    timeStamp = int(time.time())
+    timeArray = time.localtime(timeStamp)
+    timeString = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+    return timeString
+
+def getAllAPsFeatures():
+    results = dbOperations.selectAPFeatures()
+    apsfeatures = []
+    for result in results:
+        apsfeatures.append({"bssid":result["bssid"],
+                            "ssid":result["ssid"],
+                            "security":result["security"],
+                            "signal":result["signals"],
+                            "latitude":result["latitude"],
+                            "longtitude":result["longtitude"],
+                            "macAdress":result["macAdress"],
+                            "timeString":result["timeString"]} )
+    return json.dumps(apsfeatures)
+
+class ApFeaturesList:
+    def GET(self):
+        return render.apFeaturesList(getAllAPsFeatures())
 
 class ShowMap:
     def GET(self):
@@ -75,7 +101,6 @@ class GetWifiLatLng:
         data={}
         data["count"]=total
         data["location"]=location
-        #return "var latLng = JSON.parse('" + json.dumps(data) + "');"
         return json.dumps(data)
         
 class GetWifiInfos:
@@ -124,9 +149,6 @@ class SendApFeatures:
         return render.apFeatures(form)
     
     def POST(self):
-        timeStamp = int(time.time())
-        timeArray = time.localtime(timeStamp)
-        timeString = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
         i = web.input()
         macAdress = web.net.websafe(i.MacAdress)
         bssid = web.net.websafe(i.BSSID)
@@ -135,6 +157,7 @@ class SendApFeatures:
         signal = web.net.websafe(i.Signal)
         latitude = web.net.websafe(i.Latitude)
         longtitude = web.net.websafe(i.Longtitude)
+        timeString = getTimeString()
         featuresDict = {'BSSID':bssid, 'SSID':ssid, 'SECURITY':security, 'SIGNALS':signal,
                         'LONGTITUDE':longtitude, 'LATITUDE':latitude, 'TIMESTRING':timeString, 'MACADRESS':macAdress}    
         if not verifyFeatures(featuresDict):
@@ -145,6 +168,7 @@ class SendApFeatures:
             return result
             #raise web.seeother('/fail/sendAPFeatures')
         else:
+            '''
             db.insert('APsFeatures',
                       bssid=bssid,
                       ssid=ssid,
@@ -154,6 +178,8 @@ class SendApFeatures:
                       longtitude=longtitude,
                       macAdress=macAdress,
                       timeString=timeString )
+                      '''
+            dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
             result = {
                 "code":1,
                 "info":"Upload success."
