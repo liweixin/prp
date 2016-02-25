@@ -7,7 +7,6 @@ function autocreate(){
 	var apfeature=document.getElementById("apfeature").value;
 	var json = JSON.parse(apfeature);
 	var line = json.length;
-	alert(line);
 	//添加列表名称
 	var tr=document.createElement("tr");
 	for(obj in json[0]){

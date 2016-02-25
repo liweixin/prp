@@ -201,7 +201,8 @@ class SendApFeatures:
 def verifyFeatures(featuresDict):
     t=db.select('APsFeatures', where="bssid=$featuresDict['BSSID']",vars=locals())
     for temp in t:
-        print 'existed ssid, aborted to add.'
+        dbOperations.updateAPFeatures(featuresDict)
+        print 'Update Success.'
         return False      
     return True
 

@@ -33,6 +33,22 @@ def insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdr
               macAdress=macAdress,
               timeString=timeString )
 
+def updateAPFeatures(dic):
+    db.update('APsFeatures',   
+              where="bssid=$dic['BSSID']",  #The "$" shouldn't be removed.
+              ssid=dic['SSID'],
+              security=dic['SECURITY'],
+              signals=dic['SIGNALS'],
+              latitude=dic['LATITUDE'],
+              longtitude=dic['LONGTITUDE'],
+              macAdress=dic['MACADRESS'],
+              timeString=dic['TIMESTRING'], 
+	      vars = locals() )  
+    #must add "vars = locals()"
+    #to get the value of dic['BSSID'] from the outside scope
+			  
 def selectAPFeatures():
     result = db.select('APsFeatures')
     return result
+	
+	
