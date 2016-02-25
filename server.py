@@ -33,6 +33,8 @@ urls = (
     '/wifiLatLng', 'GetWifiLatLng',
     '/mapDisplay', 'ShowMap',
     '/apFeaturesList', 'ApFeaturesList',
+    '/home', 'Home',
+    '/', 'Blank',
 )
 
 app = web.application(urls,globals())
@@ -66,6 +68,14 @@ def getAllAPsFeatures():
                             "timeString":result["timeString"]} )
     return json.dumps(apsfeatures)
 
+class Home:
+    def GET(self):
+        return render.home()
+
+class Blank:
+    def GET(self):
+        raise web.seeother('/home')
+
 class ApFeaturesList:
     def GET(self):
         return render.apFeaturesList(getAllAPsFeatures())
@@ -76,7 +86,7 @@ class ShowMap:
         location = []
         for result in results:
             location.append({"longtitude":result["longtitude"], "latitude":result["latitude"]})
-        return render.haha(json.dumps(location))
+        return render.mapDisplay(json.dumps(location))
                             
 class GetWifiLatLng:
     def GET(self):
