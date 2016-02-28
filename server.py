@@ -29,7 +29,7 @@ web.config.session_parameters['expired_message'] = 'Warning: Session Expired'
 # Define urls and the corresponding handlers 
 urls = (
     '/apFeatures', 'SendApFeatures',
-    '/wifiInfos/?Latitude=(.+)&Longtitude=(.+)', 'GetWifiInfos',
+    '/wifiInfos', 'GetWifiInfos',
     '/wifiLatLng', 'GetWifiLatLng',
     '/mapDisplay', 'ShowMap',
     '/apFeaturesList', 'ApFeaturesList',
@@ -114,7 +114,14 @@ class GetWifiLatLng:
         return json.dumps(data)
         
 class GetWifiInfos:
-    def GET(self, lat, lng):
+    def GET(self):
+        st = web.ctx.query
+        lat = 0
+        lng = 0
+        if((st.find("?Latitude=")==0)&(st.find("&Longtitude=")>=0)):
+            pos = st.find("&Longtitude=")
+            lat = float(st[10:pos])
+            lng = float(st[pos+12:])
         latlngDict = {'latitude':lat, 'longtitude':lng}
         results = db.select('APsFeatures', what="signals, security, ssid, bssid, timeString",
                             where="(latitude=$latlngDict['latitude'])and(longtitude=$latlngDict['longtitude'])",
