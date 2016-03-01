@@ -16,6 +16,12 @@ function autocreate(){
 		td.innerHTML=obj;
 		tr.appendChild(td);
 	}
+	var td=document.createElement("td");
+	td.innerHTML='Operation';
+	tr.appendChild(td);
+	var td=document.createElement("td");
+	td.innerHTML='Operation';
+	tr.appendChild(td);
 	table.appendChild(tr); 
 	
 	for(var i=0;i<line;i++){
@@ -29,6 +35,12 @@ function autocreate(){
 			td.innerHTML=json[i][obj];
 			tr.appendChild(td);
 		}
+		var td=document.createElement("td");
+		td.innerHTML='<a href="/apFeatures" onclick=""> Edit</a>';
+		tr.appendChild(td);
+		var td=document.createElement("td");
+		td.innerHTML='<a href="/wifiInfos/del/test" onclick=""> Delete</a>';
+		tr.appendChild(td);
 		table.appendChild(tr); 
 	}
 	document.getElementById("d1").appendChild(table);

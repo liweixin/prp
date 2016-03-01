@@ -35,6 +35,7 @@ urls = (
     '/apFeaturesList', 'ApFeaturesList',
     '/home', 'Home',
     '/', 'Blank',
+    '/wifiInfos/del/(.+)', 'DelWifiInfo',
 )
 
 app = web.application(urls,globals())
@@ -47,6 +48,11 @@ render = web.template.render(config.templatesPath)
 db = web.database(dbn=config.dbn, db=config.db, user=config.dbuser, pw=config.dbpw)
 store = web.session.DBStore(db, 'Sessions')
 session = web.session.Session(app, store,initializer={'logged_in': False, 'username': ""})
+
+class DelWifiInfo:
+    def GET(self, bssid):
+        dbOperations.deleteAPFeature(bssid)
+        return "Delete Success."
 
 def getTimeString():
     timeStamp = int(time.time())
@@ -115,13 +121,9 @@ class GetWifiLatLng:
         
 class GetWifiInfos:
     def GET(self):
-        st = web.ctx.query
-        lat = 0
-        lng = 0
-        if((st.find("?Latitude=")==0)&(st.find("&Longtitude=")>=0)):
-            pos = st.find("&Longtitude=")
-            lat = float(st[10:pos])
-            lng = float(st[pos+12:])
+        i = web.input()
+        lat = web.net.websafe(i.Latitude)
+        lng = web.net.websafe(i.Longtitude)
         latlngDict = {'latitude':lat, 'longtitude':lng}
         results = db.select('APsFeatures', what="signals, security, ssid, bssid, timeString",
                             where="(latitude=$latlngDict['latitude'])and(longtitude=$latlngDict['longtitude'])",

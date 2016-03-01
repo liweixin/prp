@@ -50,5 +50,7 @@ def updateAPFeatures(dic):
 def selectAPFeatures():
     result = db.select('APsFeatures')
     return result
-	
+
+def deleteAPFeature(bssid):
+    db.delete('APsFeatures',where = 'bssid = $bssid', vars = locals())
 	
