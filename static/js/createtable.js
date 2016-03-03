@@ -39,7 +39,7 @@ function autocreate(){
 		td.innerHTML='<a href="/apFeatures" onclick=""> Edit</a>';
 		tr.appendChild(td);
 		var td=document.createElement("td");
-		td.innerHTML='<a href="/wifiInfos/del/test" onclick=""> Delete</a>';
+		td.innerHTML='<a href=/wifiInfos/del/' + json[i]['bssid'] + ' onclick=""> Delete</a>';
 		tr.appendChild(td);
 		table.appendChild(tr); 
 	}
