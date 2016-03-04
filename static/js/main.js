@@ -48,3 +48,10 @@ function getJsonObjLength(jsonObj) {
         }
         return Length;
 }
+function warning(logged_in){
+	if(logged_in){
+		alert(1);
+	} else {
+		alert(0);
+	}        
+}

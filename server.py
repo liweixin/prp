@@ -28,6 +28,7 @@ web.config.session_parameters['expired_message'] = 'Warning: Session Expired'
 
 # Define urls and the corresponding handlers 
 urls = (
+    '/login', 'Login',
     '/apFeatures', 'SendApFeatures',
     '/wifiInfos', 'GetWifiInfos',
     '/wifiLatLng', 'GetWifiLatLng',
@@ -36,6 +37,9 @@ urls = (
     '/home', 'Home',
     '/', 'Blank',
     '/wifiInfos/del/(.+)', 'DelWifiInfo',
+    '/fail/(\w+)','Fail',
+    '/success/(\w+)','Success',
+    '/logout', 'Logout',
 )
 
 app = web.application(urls,globals())
@@ -44,13 +48,16 @@ t_globals = {
     'cookie' : web.cookies,
 }
 
-render = web.template.render(config.templatesPath)
 db = web.database(dbn=config.dbn, db=config.db, user=config.dbuser, pw=config.dbpw)
 store = web.session.DBStore(db, 'Sessions')
 session = web.session.Session(app, store,initializer={'logged_in': False, 'username': ""})
+render = web.template.render(config.templatesPath, base='base', globals={'context': session})
+
 
 class DelWifiInfo:
     def GET(self, bssid):
+        if session.logged_in == False:
+            raise web.seeother('/login')
         dbOperations.deleteAPFeature(bssid)
         return "Delete Success."
 
@@ -73,21 +80,28 @@ def getAllAPsFeatures():
                             "macAdress":result["macAdress"],
                             "timeString":result["timeString"]} )
     return json.dumps(apsfeatures)
-
+'''
 class Home:
     def GET(self):
         return render.home()
-
+'''
 class Blank:
     def GET(self):
-        raise web.seeother('/home')
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        else:
+            raise web.seeother('/mapDisplay')
 
 class ApFeaturesList:
     def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
         return render.apFeaturesList(getAllAPsFeatures())
 
 class ShowMap:
     def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
         results = db.select('APsFeatures', what="longtitude, latitude", order="longtitude DESC")
         location = []
         for result in results:
@@ -162,8 +176,8 @@ class SendApFeatures:
         web.form.Button('Submit'),
     )    
     def GET(self):
-        #if session.logged_in == True:
-        #    return 
+        if session.logged_in == False:
+            raise web.seeother('/login')
         form = self.features_form()
         return render.apFeatures(form)
     
@@ -187,17 +201,6 @@ class SendApFeatures:
             return result
             #raise web.seeother('/fail/sendAPFeatures')
         else:
-            '''
-            db.insert('APsFeatures',
-                      bssid=bssid,
-                      ssid=ssid,
-                      security=security,
-                      signals=signal,
-                      latitude=latitude,
-                      longtitude=longtitude,
-                      macAdress=macAdress,
-                      timeString=timeString )
-                      '''
             dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
             result = {
                 "code":1,
@@ -207,6 +210,38 @@ class SendApFeatures:
             return result
             raise web.seeother('/success/sendAPFeatures')
 
+class Login:
+    #create login form
+    login_form = web.form.Form(
+        web.form.Textbox('Username',web.form.notnull,size=30),
+        web.form.Password('Password',web.form.notnull,size=30),
+        web.form.Button('Login'),
+    )
+    def GET(self):
+        #if session.logged_in == True:
+        #    raise web.seeother('/mapDisplay')
+        form = self.login_form()
+        return render.login(form)
+    def POST(self):
+        i = web.input()
+        username, password = web.net.websafe(i.Username), hashlib.md5(web.net.websafe(i.Password)).hexdigest()
+        if not verifyLogin(username,password):
+            raise web.seeother('/fail/login')
+        else:
+            web.setcookie('username', username)
+            session.logged_in=True
+            raise web.seeother('/success/login')
+
+# Redirect to this page when user's operation failed
+class Fail:
+    def GET(self, operation):
+        return render.fail(operation)
+
+# Redirect to this page when user's operation succeeded
+class Success:
+    def GET(self, operation):
+        return render.success(operation)
+
 def verifyFeatures(featuresDict):
     t=db.select('APsFeatures', where="bssid=$featuresDict['BSSID']",vars=locals())
     for temp in t:
@@ -215,6 +250,17 @@ def verifyFeatures(featuresDict):
         return False      
     return True
 
+class Logout:
+    def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        session.logged_in=False
+        session.kill()
+        web.setcookie('username','',expires=-1)
+        raise web.seeother('/success/logout')
+
+def verifyLogin(username,password):
+    return (username=="fishing" and password==hashlib.md5("fishing").hexdigest());
 
 def notfound():
     return web.notfound("Sorry, the page your were looking for was not found.")
