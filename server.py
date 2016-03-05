@@ -80,11 +80,11 @@ def getAllAPsFeatures():
                             "macAdress":result["macAdress"],
                             "timeString":result["timeString"]} )
     return json.dumps(apsfeatures)
-'''
+
 class Home:
     def GET(self):
-        return render.home()
-'''
+        return web.seeother('/')
+
 class Blank:
     def GET(self):
         if session.logged_in == False:
