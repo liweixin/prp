@@ -40,6 +40,7 @@ urls = (
     '/fail/(\w+)','Fail',
     '/success/(\w+)','Success',
     '/logout', 'Logout',
+    '/apacessrecord', 'APAcessRecord',
 )
 
 app = web.application(urls,globals())
@@ -53,6 +54,39 @@ store = web.session.DBStore(db, 'Sessions')
 session = web.session.Session(app, store,initializer={'logged_in': False, 'username': ""})
 render = web.template.render(config.templatesPath, base='base', globals={'context': session})
 
+
+class APAcessRecord:
+    features_form = web.form.Form(
+        web.form.Textbox('bssid',web.form.notnull,size=17),
+        web.form.Textbox('startTime',web.form.notnull,size=30),
+        web.form.Textbox('endTime',web.form.notnull,size=50),
+        web.form.Textbox('longtitude',web.form.notnull,size=12),
+        web.form.Textbox('latitude',web.form.notnull,size=12),
+        web.form.Textbox('macAdress',web.form.notnull,size=17),
+        web.form.Button('Submit'),
+    )    
+    def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        form = self.features_form()
+        return render.apAcessRecord(form)
+    
+    def POST(self):
+        i = web.input()
+        macAdress = web.net.websafe(i.macAdress)
+        bssid = web.net.websafe(i.bssid)
+        startTime = web.net.websafe(i.startTime)
+        endTime = web.net.websafe(i.endTime)
+        latitude = web.net.websafe(i.latitude)
+        longtitude = web.net.websafe(i.longtitude)
+        dbOperations.insertAPAcessRecord(bssid, macAdress, startTime, endTime, latitude, longtitude)
+        result = {
+            "code":1,
+            "info":"Upload success."
+        }
+        print 'Success'
+        return result
+        raise web.seeother('/success/sendAPFeatures')
 
 class DelWifiInfo:
     def GET(self, bssid):

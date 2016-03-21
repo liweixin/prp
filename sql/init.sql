@@ -18,3 +18,13 @@ CREATE TABLE `APsFeatures`
     `timeString` VARCHAR(30),
     PRIMARY KEY(`bssid`)
 );
+CREATE TABLE `APAcessRecord`
+(
+    `bssid` CHAR(17),
+	`macAdress` VARCHAR(30),
+	`startTime` VARCHAR(30),
+	`endTime` VARCHAR(30),
+	`latitude` DOUBLE,
+	`longtitude` DOUBLE,
+	PRIMARY KEY(`startTime`)
+)

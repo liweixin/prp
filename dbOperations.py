@@ -22,6 +22,15 @@ def insertAPCredits(bssid, location_history, useraccess_history, security_histor
     db.insert('APsCredit', bssid=bssid, location_history=location_history, useraccess_history=useraccess_history, security_history=security_history, route_history=route_history, credit=credit)
 '''
 
+def insertAPAcessRecord(bssid, macAdress, startTime, endTime, latitude, longtitude):
+    db.insert('APAcessRecord',
+              bssid=bssid,
+              macAdress=macAdress,
+              startTime=startTime,
+              endTime=endTime,
+              latitude=latitude,
+              longtitude=longtitude )
+
 def insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString):
     db.insert('APsFeatures',
               bssid=bssid,
