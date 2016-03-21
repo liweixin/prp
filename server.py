@@ -10,6 +10,7 @@ import config
 import dbOperations
 
 #initDatabase()支持中文
+#testssh
 
 #Configurations for session
 #Non debug mode
