@@ -36,9 +36,11 @@ urls = (
     '/wifiLatLng', 'GetWifiLatLng',
     '/mapDisplay', 'ShowMap',
     '/apFeaturesList', 'ApFeaturesList',
+    '/apacessrecordlist', 'APAcessRecordList',
     '/home', 'Home',
     '/', 'Blank',
     '/wifiInfos/del/(.+)', 'DelWifiInfo',
+    '/acessInfos/del/(.+)', 'DelAcessInfo',
     '/fail/(\w+)','Fail',
     '/success/(\w+)','Success',
     '/logout', 'Logout',
@@ -90,11 +92,24 @@ class APAcessRecord:
         return result
         raise web.seeother('/success/sendAPFeatures')
 
+class APAcessRecordList:
+    def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        return render.apAcessRecordList(getAllAPAcessRecord())
+
 class DelWifiInfo:
     def GET(self, bssid):
         if session.logged_in == False:
             raise web.seeother('/login')
         dbOperations.deleteAPFeature(bssid)
+        return "Delete Success."
+
+class DelAcessInfo:
+    def GET(self, startTime):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        dbOperations.deleteAPAcessRecord(startTime)
         return "Delete Success."
 
 def getTimeString():
@@ -116,6 +131,18 @@ def getAllAPsFeatures():
                             "macAdress":result["macAdress"],
                             "timeString":result["timeString"]} )
     return json.dumps(apsfeatures)
+
+def getAllAPAcessRecord():
+    results = dbOperations.selectAPAcessRecord()
+    apAcessRecord = []
+    for result in results:
+        apAcessRecord.append({"bssid":result["bssid"],
+                            "macAdress":result["macAdress"],
+                            "startTime":result["startTime"],
+                            "endTime":result["endTime"],
+                            "latitude":result["latitude"],
+                            "longtitude":result["longtitude"]} )
+    return json.dumps(apAcessRecord)
 
 class Home:
     def GET(self):

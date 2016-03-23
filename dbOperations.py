@@ -60,6 +60,13 @@ def selectAPFeatures():
     result = db.select('APsFeatures')
     return result
 
+def selectAPAcessRecord():
+    result = db.select('APAcessRecord')
+    return result
+
 def deleteAPFeature(bssid):
     db.delete('APsFeatures',where = 'bssid = $bssid', vars = locals())
+
+def deleteAPAcessRecord(startTime):
+    db.delete('APAcessRecord',where = 'startTime = $startTime', vars = locals())
 	
