@@ -37,6 +37,7 @@ urls = (
     '/mapDisplay', 'ShowMap',
     '/apFeaturesList', 'ApFeaturesList',
     '/apacessrecordlist', 'APAcessRecordList',
+    '/tracerouterecordlist', 'TraceRouteRecordList',
     '/home', 'Home',
     '/', 'Blank',
     '/wifiInfos/del/(.+)', 'DelWifiInfo',
@@ -45,6 +46,7 @@ urls = (
     '/success/(\w+)','Success',
     '/logout', 'Logout',
     '/apacessrecord', 'APAcessRecord',
+    '/traceroute/upload', 'TraceRouteUpload',
 )
 
 app = web.application(urls,globals())
@@ -97,6 +99,12 @@ class APAcessRecordList:
         if session.logged_in == False:
             raise web.seeother('/login')
         return render.apAcessRecordList(getAllAPAcessRecord())
+    
+class TraceRouteRecordList:
+    def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        return render.traceRouteRecordList(getAllTraceRouteRecord())
 
 class DelWifiInfo:
     def GET(self, bssid):
@@ -143,6 +151,16 @@ def getAllAPAcessRecord():
                             "latitude":result["latitude"],
                             "longtitude":result["longtitude"]} )
     return json.dumps(apAcessRecord)
+
+def getAllTraceRouteRecord():
+    results = dbOperations.selectTraceRouteRecord()
+    traceRouteRecord = []
+    for result in results:
+        traceRouteRecord.append({"bssid":result["bssid"],
+                            "macAdress":result["macAdress"],
+                            "content":result["content"]} )
+    print traceRouteRecord
+    return json.dumps(traceRouteRecord)
 
 class Home:
     def GET(self):
@@ -294,6 +312,33 @@ class Login:
             web.setcookie('username', username)
             session.logged_in=True
             raise web.seeother('/success/login')
+
+class TraceRouteUpload:
+    features_form = web.form.Form(
+        web.form.Textbox('bssid',web.form.notnull,size=17),
+        web.form.Textbox('macAdress',web.form.notnull,size=17),
+        web.form.Textbox('content',web.form.notnull,size=500),
+        web.form.Button('Submit'),
+    )    
+    def GET(self):
+        if session.logged_in == False:
+            raise web.seeother('/login')
+        form = self.features_form()
+        return render.TraceRoute(form)
+    
+    def POST(self):
+        i = web.input()
+        macAdress = web.net.websafe(i.macAdress)
+        bssid = web.net.websafe(i.bssid)
+        content = web.net.websafe(i.content)
+        dbOperations.insertTraceRouteRecord(bssid, macAdress, content)
+        result = {
+            "code":1,
+            "info":"Upload success."
+        }
+        print 'Success'
+        return result
+        raise web.seeother('/success/sendTraceRouteRecord')
 
 # Redirect to this page when user's operation failed
 class Fail:

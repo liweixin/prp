@@ -31,6 +31,12 @@ def insertAPAcessRecord(bssid, macAdress, startTime, endTime, latitude, longtitu
               latitude=latitude,
               longtitude=longtitude )
 
+def insertTraceRouteRecord(bssid, macAdress, content):
+    db.insert('TraceRouteRecord',
+              bssid=bssid,
+              macAdress=macAdress,
+              content=content)
+
 def insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString):
     db.insert('APsFeatures',
               bssid=bssid,
@@ -62,6 +68,10 @@ def selectAPFeatures():
 
 def selectAPAcessRecord():
     result = db.select('APAcessRecord')
+    return result
+
+def selectTraceRouteRecord():
+    result = db.select('TraceRouteRecord')
     return result
 
 def deleteAPFeature(bssid):

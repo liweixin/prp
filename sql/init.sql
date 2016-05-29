@@ -28,3 +28,9 @@ CREATE TABLE `APAcessRecord`
 	`longtitude` DOUBLE,
 	PRIMARY KEY(`startTime`)
 )
+CREATE TABLE `TraceRouteRecord`
+(
+    `bssid` CHAR(17),
+	`macAdress` VARCHAR(30),
+	`content` VARCHAR(1000),
+)
