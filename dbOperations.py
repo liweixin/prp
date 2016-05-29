@@ -1,3 +1,4 @@
+# -*- coding: cp936 -*-
 #coding = utf-8
 
 import web
@@ -30,12 +31,26 @@ def insertAPAcessRecord(bssid, macAdress, startTime, endTime, latitude, longtitu
               endTime=endTime,
               latitude=latitude,
               longtitude=longtitude )
-
+    
+#一个bssid只能有一个content，后面应该改为一个bssid&&macAdress对应一个content
 def insertTraceRouteRecord(bssid, macAdress, content):
-    db.insert('TraceRouteRecord',
+    results = db.select('TraceRouteRecord', where = 'bssid = $bssid', vars = locals())
+    traceRouteRecord = []
+    cnt = 0
+    for result in results:
+        cnt = cnt + 1
+    print cnt
+    if(cnt==0):
+        db.insert('TraceRouteRecord',
               bssid=bssid,
               macAdress=macAdress,
               content=content)
+    else:
+        db.update('TraceRouteRecord',
+              where = "bssid=$bssid",
+              macAdress=macAdress,
+              content=content,
+              vars = locals() )
 
 def insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString):
     db.insert('APsFeatures',

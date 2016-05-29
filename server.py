@@ -159,7 +159,6 @@ def getAllTraceRouteRecord():
         traceRouteRecord.append({"bssid":result["bssid"],
                             "macAdress":result["macAdress"],
                             "content":result["content"]} )
-    print traceRouteRecord
     return json.dumps(traceRouteRecord)
 
 class Home:
