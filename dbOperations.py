@@ -34,7 +34,7 @@ def insertAPAcessRecord(bssid, macAdress, startTime, endTime, latitude, longtitu
     
 #一个bssid只能有一个content，后面应该改为一个bssid&&macAdress对应一个content
 def insertTraceRouteRecord(bssid, macAdress, content):
-    results = db.select('TraceRouteRecord', where = 'bssid = $bssid', vars = locals())
+    results = db.select('TraceRouteRecord', where = 'bssid = $bssid and macAdress=$macAdress', vars = locals())
     traceRouteRecord = []
     cnt = 0
     for result in results:
@@ -47,8 +47,7 @@ def insertTraceRouteRecord(bssid, macAdress, content):
               content=content)
     else:
         db.update('TraceRouteRecord',
-              where = "bssid=$bssid",
-              macAdress=macAdress,
+              where = "bssid=$bssid and macAdress=$macAdress",
               content=content,
               vars = locals() )
 
@@ -94,4 +93,7 @@ def deleteAPFeature(bssid):
 
 def deleteAPAcessRecord(startTime):
     db.delete('APAcessRecord',where = 'startTime = $startTime', vars = locals())
-	
+
+def querySafety(bssid):
+    result = db.select('exceltomysql', what = 'safe', where = 'bssid = $bssid', vars = locals())
+    return result	

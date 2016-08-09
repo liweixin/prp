@@ -47,6 +47,7 @@ urls = (
     '/logout', 'Logout',
     '/apacessrecord', 'APAcessRecord',
     '/traceroute/upload', 'TraceRouteUpload',
+    '/querysafety/(.+)', 'QuerySafety',
 )
 
 app = web.application(urls,globals())
@@ -371,6 +372,16 @@ def verifyLogin(username,password):
 
 def notfound():
     return web.notfound("Sorry, the page your were looking for was not found.")
+
+class QuerySafety:
+    def GET(self, bssid):
+        results = dbOperations.querySafety(bssid)
+        for result in results:
+            return result["safe"]
+        return 2
+    #1:危险
+    #0:安全
+    #2：未知
     
 app.notfound = notfound
 
