@@ -8,6 +8,7 @@ import os
 import json
 import config
 import dbOperations
+import judgeIFrogue
 
 
 #initDatabase()支持中文
@@ -288,6 +289,14 @@ class SendApFeatures:
                 "info":"Upload success."
                 }
             print 'Success'
+            list = []
+            list.append({"ssid":ssid,
+                        "bssid":bssid,
+                        "latitude":float(latitude),
+                        "security":security,
+                        "signal":int(signal),
+                        "longtitude":float(longtitude)} )
+            judgeIFrogue.addAPSafety(list)
             return result
             raise web.seeother('/success/sendAPFeatures')
 

@@ -97,3 +97,6 @@ def deleteAPAcessRecord(startTime):
 def querySafety(bssid):
     result = db.select('exceltomysql', what = 'safe', where = 'bssid = $bssid', vars = locals())
     return result	
+
+def insertSafety(bssid, safe):
+    db.insert('exceltomysql', bssid = bssid, safe = safe)

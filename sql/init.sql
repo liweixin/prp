@@ -34,3 +34,7 @@ CREATE TABLE `TraceRouteRecord`
 	`macAdress` VARCHAR(30),
 	`content` VARCHAR(1000)
 )
+create table `exceltomysql`(
+    `bssid` CHAR(17),
+    `safe` SMALLINT
+);
