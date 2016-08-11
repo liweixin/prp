@@ -276,7 +276,7 @@ class SendApFeatures:
         featuresDict = {'BSSID':bssid, 'SSID':ssid, 'SECURITY':security, 'SIGNALS':signal,
                         'LONGTITUDE':longtitude, 'LATITUDE':latitude, 'TIMESTRING':timeString, 'MACADRESS':macAdress}    
         if not verifyFeatures(featuresDict):
-            dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
+            '''dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
             result = {
                 "code":1,
                 "info":"Upload success."
@@ -289,7 +289,7 @@ class SendApFeatures:
                         "security":security,
                         "signal":int(signal),
                         "longtitude":float(longtitude)} )
-            judgeIFrogue.addAPSafety(list)
+            judgeIFrogue.addAPSafety(list)'''
             result = {
                 "code":1,
                 "info":"Update Success."
@@ -297,20 +297,20 @@ class SendApFeatures:
             return result
             #raise web.seeother('/fail/sendAPFeatures')
         else:
-            dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
+            #dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
             result = {
                 "code":1,
                 "info":"Upload success."
                 }
             print 'Success'
-            list = []
+            '''list = []
             list.append({"ssid":ssid,
                         "bssid":bssid,
                         "latitude":float(latitude),
                         "security":security,
                         "signal":int(signal),
                         "longtitude":float(longtitude)} )
-            judgeIFrogue.addAPSafety(list)
+            judgeIFrogue.addAPSafety(list)'''
             return result
             raise web.seeother('/success/sendAPFeatures')
 
