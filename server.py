@@ -276,12 +276,12 @@ class SendApFeatures:
         featuresDict = {'BSSID':bssid, 'SSID':ssid, 'SECURITY':security, 'SIGNALS':signal,
                         'LONGTITUDE':longtitude, 'LATITUDE':latitude, 'TIMESTRING':timeString, 'MACADRESS':macAdress}    
         if not verifyFeatures(featuresDict):
-            '''dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)
+            '''dbOperations.insertAPFeatures(bssid, ssid, security, signal, latitude, longtitude, macAdress, timeString)'''
             result = {
                 "code":1,
                 "info":"Upload success."
                 }
-            print 'Success'
+            '''print 'Success'
             list = []
             list.append({"ssid":ssid,
                         "bssid":bssid,
